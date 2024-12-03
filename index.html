@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Google Maps with Paris Markers in Madrid</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsn61hY6dcjJPcU_OYZg-Dt0ZsLPXpLhg&callback=initMap"
+    async defer></script>
+    <style>
+      /* Ensure the map takes up the full page */
+      #map {
+        height: 100%;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      // Coordinates for Madrid city center
+      const madridCenter = { lat: 40.416775, lng: -3.703790 };
+
+      // Coordinates for Paris center
+      const parisCenter = { lat: 48.85661, lng: 2.35222 };
+
+      // Notable locations in Paris
+      const parisLocations = [
+        {
+          name: 'Aéroport de Paris-Orly',
+          position: { lat: 48.73046, lng: 2.36941 },
+        },
+        {
+          name: 'Arc de Triomphe',
+          position: { lat: 48.87378, lng: 2.29503 },
+        },
+        {
+          name: 'Tour Eiffel',
+          position: { lat: 48.85823, lng: 2.29439 },
+        },
+      ];
+
+      // Function to calculate the relative position from Paris to Madrid
+      function calculateRelativePosition(parisMarker, parisCenter, madridCenter) {
+        const relativeLat = parisMarker.lat - parisCenter.lat;
+        const relativeLng = parisMarker.lng - parisCenter.lng;
+        return {
+          lat: madridCenter.lat + relativeLat,
+          lng: madridCenter.lng + relativeLng,
+        };
+      }
+
+      // Initialize the Google Map
+      function initMap() {
+        // Create a new map centered on Madrid
+        const map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 12,
+          center: madridCenter,
+        });
+
+        // Add a marker at Madrid's center
+        new google.maps.Marker({
+          position: madridCenter,
+          map: map,
+          title: 'Madrid Center',
+        });
+
+        // Loop through Paris locations and place their markers in Madrid at relative positions
+        parisLocations.forEach((location) => {
+          const relativePosition = calculateRelativePosition(
+            location.position,
+            parisCenter,
+            madridCenter
+          );
+          
+          new google.maps.Marker({
+            position: relativePosition,
+            map: map,
+            title: location.name + ' (relative to Madrid)',
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
